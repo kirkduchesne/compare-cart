@@ -1,0 +1,14 @@
+{
+  "name": "compare-cart",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run --threads false"
+  },
+  "dependencies": { "react": "18.2.0", "react-dom": "18.2.0" },
+  "devDependencies": { "@vitejs/plugin-react": "3.0.1", "vite": "4.0.4", "vitest": "0.27.3", "@testing-library/react": "13.4.0", "jsdom": "20.0.3" }
+}

@@ -9,6 +9,7 @@ test('rejects blank names and adds a product as text', () => {
   fireEvent.click(screen.getByText('Add product'));
   expect(screen.getByRole('alert').textContent).toContain('product name');
   fireEvent.change(screen.getByLabelText('Product name'), { target: { value: '<b>Oats</b>' } });
+  fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '4.25' } });
   fireEvent.click(screen.getByText('Add product'));
-  expect(screen.getByText('<b>Oats</b>')).toBeTruthy();
+  expect(screen.getByText('<b>Oats</b> — $4.25')).toBeTruthy();
 });

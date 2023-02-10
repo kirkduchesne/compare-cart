@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { parsePrice, formatPrice } from './money';
+import { parsePrice } from './money';
+import { bestProducts } from './comparison';
+import { ProductCard } from './ProductCard';
 
 export function App() {
   const [name, setName] = useState('');
@@ -31,6 +33,8 @@ export function App() {
     setError('');
   }
 
+  const best = bestProducts(products);
+
   return <main>
     <header><p className="eyebrow">SMALL CHOICES, CLEARER VALUE</p><h1>Compare Cart</h1><p>A little help choosing what goes in your basket.</p></header>
     <section aria-labelledby="add-title"><h2 id="add-title">Add a product</h2>
@@ -42,7 +46,7 @@ export function App() {
       </form>
     </section>
     <section aria-labelledby="comparison-title"><h2 id="comparison-title">Your comparison</h2>
-      {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map((product, index) => <li key={index}>{product.name} — {formatPrice(product.cents)} / {product.units} units</li>)}</ul>}
+      {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map((product, index) => <ProductCard key={index} product={product} best={best.includes(product)} />)}</ul>}
     </section>
   </main>;
 }

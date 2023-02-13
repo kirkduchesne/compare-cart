@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { parsePrice } from './money';
 import { bestProducts } from './comparison';
 import { ProductCard } from './ProductCard';
 
 export function App() {
+  const nameRef = useRef(null);
   const [name, setName] = useState('');
   const [units, setUnits] = useState('1');
   const [price, setPrice] = useState('');
@@ -26,7 +27,12 @@ export function App() {
       setError('Units per pack must be a whole number from 1 to 1000.');
       return;
     }
-    setProducts([...products, { name: name.trim(), cents, units: count }]);
+    if (products.length >= 6) {
+      setError('Compare up to six products. Remove one before adding another.');
+      return;
+    }
+    const id = products.reduce((max, product) => Math.max(max, product.id), 0) + 1;
+    setProducts([...products, { id, name: name.trim(), cents, units: count }]);
     setUnits('1');
     setPrice('');
     setName('');
@@ -39,14 +45,14 @@ export function App() {
     <header><p className="eyebrow">SMALL CHOICES, CLEARER VALUE</p><h1>Compare Cart</h1><p>A little help choosing what goes in your basket.</p></header>
     <section aria-labelledby="add-title"><h2 id="add-title">Add a product</h2>
       <form onSubmit={addProduct} noValidate>
-        <label htmlFor="name">Product name</label><input id="name" value={name} onChange={event => setName(event.target.value)} maxLength={80} aria-describedby="form-error" />
+        <label htmlFor="name">Product name</label><input id="name" ref={nameRef} value={name} onChange={event => setName(event.target.value)} maxLength={80} aria-describedby="form-error" />
         <label htmlFor="price">Pack price ($)</label><input id="price" inputMode="decimal" value={price} onChange={event => setPrice(event.target.value)} aria-describedby="form-error" />
         <label htmlFor="units">Units per pack</label><input id="units" type="number" min="1" max="1000" step="1" value={units} onChange={event => setUnits(event.target.value)} aria-describedby="form-error" />
         <p id="form-error" role="alert">{error}</p><button>Add product</button>
       </form>
     </section>
     <section aria-labelledby="comparison-title"><h2 id="comparison-title">Your comparison</h2>
-      {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map((product, index) => <ProductCard key={index} product={product} best={best.includes(product)} />)}</ul>}
+      {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map(product => <ProductCard key={product.id} product={product} best={best.includes(product)} onRemove={() => { setProducts(products.filter(item => item.id !== product.id)); nameRef.current.focus(); }} />)}</ul>}
     </section>
   </main>;
 }

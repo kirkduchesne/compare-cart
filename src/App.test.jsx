@@ -3,7 +3,7 @@ import { afterEach, expect, test } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { App } from './App';
 
-afterEach(cleanup);
+afterEach(() => { cleanup(); localStorage.clear(); });
 test('rejects blank names and adds a product as text', () => {
   render(<App />);
   fireEvent.click(screen.getByText('Add product'));

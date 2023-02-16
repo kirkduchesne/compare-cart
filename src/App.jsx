@@ -2,14 +2,22 @@ import { useRef, useState } from 'react';
 import { parsePrice } from './money';
 import { bestProducts } from './comparison';
 import { ProductCard } from './ProductCard';
+import { loadProducts, saveProducts } from './storage';
 
 export function App() {
   const nameRef = useRef(null);
   const [name, setName] = useState('');
   const [units, setUnits] = useState('1');
   const [price, setPrice] = useState('');
-  const [products, setProducts] = useState([]);
+  const [initial] = useState(() => loadProducts({ getItem: key => localStorage.getItem(key) }));
+  const [products, setProducts] = useState(initial.products);
+  const [warning, setWarning] = useState(initial.warning);
   const [error, setError] = useState('');
+
+  function updateProducts(next) {
+    setProducts(next);
+    if (initial.readable) setWarning(saveProducts(next, { setItem: (key, value) => localStorage.setItem(key, value) }));
+  }
 
   function addProduct(event) {
     event.preventDefault();
@@ -32,7 +40,7 @@ export function App() {
       return;
     }
     const id = products.reduce((max, product) => Math.max(max, product.id), 0) + 1;
-    setProducts([...products, { id, name: name.trim(), cents, units: count }]);
+    updateProducts([...products, { id, name: name.trim(), cents, units: count }]);
     setUnits('1');
     setPrice('');
     setName('');
@@ -51,8 +59,8 @@ export function App() {
         <p id="form-error" role="alert">{error}</p><button>Add product</button>
       </form>
     </section>
-    <section aria-labelledby="comparison-title"><h2 id="comparison-title">Your comparison</h2>
-      {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map(product => <ProductCard key={product.id} product={product} best={best.includes(product)} onRemove={() => { setProducts(products.filter(item => item.id !== product.id)); nameRef.current.focus(); }} />)}</ul>}
+    <section aria-labelledby="comparison-title"><h2 id="comparison-title">Your comparison</h2><p role="status">{warning}</p>
+      {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map(product => <ProductCard key={product.id} product={product} best={best.includes(product)} onRemove={() => { updateProducts(products.filter(item => item.id !== product.id)); nameRef.current.focus(); }} />)}</ul>}
     </section>
   </main>;
 }

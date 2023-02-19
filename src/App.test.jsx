@@ -13,3 +13,29 @@ test('rejects blank names and adds a product as text', () => {
   fireEvent.click(screen.getByText('Add product'));
   expect(screen.getByText('<b>Oats</b>')).toBeTruthy();
 });
+
+test('compares two packs and removes the cheapest option', () => {
+  render(<App />);
+  function add(name, price, units) {
+    fireEvent.change(screen.getByLabelText('Product name'), { target: { value: name } });
+    fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: price } });
+    fireEvent.change(screen.getByLabelText('Units per pack'), { target: { value: units } });
+    fireEvent.click(screen.getByText('Add product'));
+  }
+  add('Small', '3.00', '2');
+  add('Large', '5.00', '5');
+  expect(screen.getByText('Best unit price').closest('li').textContent).toContain('Large');
+  fireEvent.click(screen.getByRole('button', { name: 'Remove Large' }));
+  expect(screen.getByText('Best unit price').closest('li').textContent).toContain('Small');
+  expect(document.activeElement.id).toBe('name');
+});
+
+test('rejects invalid pack sizes without changing the list', () => {
+  render(<App />);
+  fireEvent.change(screen.getByLabelText('Product name'), { target: { value: 'Oats' } });
+  fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '3.00' } });
+  fireEvent.change(screen.getByLabelText('Units per pack'), { target: { value: '1.5' } });
+  fireEvent.click(screen.getByText('Add product'));
+  expect(screen.getByRole('alert').textContent).toContain('whole number');
+  expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+});

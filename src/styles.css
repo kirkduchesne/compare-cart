@@ -15,3 +15,18 @@ button:hover { background: #16382d; }
 ul { padding: 0; list-style: none; }
 li { padding: 16px 0; border-top: 1px solid #dae3da; overflow-wrap: break-word; }
 @media (max-width: 520px) { main { padding: 0 16px; margin: 28px auto; } section { padding: 18px; } h1 { font-size: 2.2rem; } }
+.product h3 { margin: 0; font-size: 1.1rem; }
+.product p { margin: 8px 0; }
+.unit-price { font-size: 1.3rem; font-weight: 700; }
+.badge { display: inline-block; padding: 4px 8px; background: #e2f0df; border-radius: 4px; font-size: .8rem; margin-right: 12px; }
+.secondary { background: white; color: #21493d; margin-top: 8px; }
+.secondary:hover { background: #eaf0e6; }
+#form-error { min-height: 1.5em; }
+.help { color: #52685a; font-size: .9rem; }
+@media (min-width: 720px) {
+  main { max-width: 1100px; display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; }
+  header { grid-column: 1 / -1; }
+  section { margin: 0; align-self: start; }
+  ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .product { min-width: 0; }
+}

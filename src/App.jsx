@@ -59,7 +59,7 @@ export function App() {
         <p id="form-error" role="alert">{error}</p><button>Add product</button>
       </form>
     </section>
-    <section aria-labelledby="comparison-title"><h2 id="comparison-title">Your comparison</h2><p role="status">{warning}</p>
+    <section aria-labelledby="comparison-title"><h2 id="comparison-title">Your comparison</h2><p className="help">Use the same unit for every product, such as grams or items. Unit prices display rounded to the nearest cent; best value uses the unrounded ratio.</p><p role="status">{warning}</p>
       {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map(product => <ProductCard key={product.id} product={product} best={best.includes(product)} onRemove={() => { updateProducts(products.filter(item => item.id !== product.id)); nameRef.current.focus(); }} />)}</ul>}
     </section>
   </main>;

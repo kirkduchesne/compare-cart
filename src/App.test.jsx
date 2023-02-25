@@ -39,3 +39,13 @@ test('rejects invalid pack sizes without changing the list', () => {
   expect(screen.getByRole('alert').textContent).toContain('whole number');
   expect(screen.queryAllByRole('listitem')).toHaveLength(0);
 });
+
+test('new IDs remain valid when loaded IDs are large', () => {
+  localStorage.setItem('compare-cart-v1', JSON.stringify([{ id: Number.MAX_SAFE_INTEGER - 1, name: 'Existing', cents: 100, units: 1 }]));
+  render(<App />);
+  fireEvent.change(screen.getByLabelText('Product name'), { target: { value: 'New' } });
+  fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '2.01' } });
+  fireEvent.click(screen.getByText('Add product'));
+  const saved = JSON.parse(localStorage.getItem('compare-cart-v1'));
+  expect(saved[1].id).toBe(1);
+});

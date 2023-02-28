@@ -3,7 +3,10 @@ import { afterEach, expect, test } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { App } from './App';
 
-afterEach(() => { cleanup(); localStorage.clear(); });
+afterEach(() => {
+  cleanup();
+  localStorage.clear();
+});
 test('rejects blank names and adds a product as text', () => {
   render(<App />);
   fireEvent.click(screen.getByText('Add product'));
@@ -41,7 +44,10 @@ test('rejects invalid pack sizes without changing the list', () => {
 });
 
 test('new IDs remain valid when loaded IDs are large', () => {
-  localStorage.setItem('compare-cart-v1', JSON.stringify([{ id: Number.MAX_SAFE_INTEGER - 1, name: 'Existing', cents: 100, units: 1 }]));
+  localStorage.setItem(
+    'compare-cart-v1',
+    JSON.stringify([{ id: Number.MAX_SAFE_INTEGER - 1, name: 'Existing', cents: 100, units: 1 }])
+  );
   render(<App />);
   fireEvent.change(screen.getByLabelText('Product name'), { target: { value: 'New' } });
   fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '2.01' } });

@@ -11,14 +11,15 @@ export function App() {
   const [name, setName] = useState('');
   const [units, setUnits] = useState('1');
   const [price, setPrice] = useState('');
-  const [initial] = useState(() => loadProducts({ getItem: key => localStorage.getItem(key) }));
+  const [initial] = useState(() => loadProducts({ getItem: (key) => localStorage.getItem(key) }));
   const [products, setProducts] = useState(initial.products);
   const [warning, setWarning] = useState(initial.warning);
   const [error, setError] = useState('');
 
   function updateProducts(next) {
     setProducts(next);
-    if (initial.readable) setWarning(saveProducts(next, { setItem: (key, value) => localStorage.setItem(key, value) }));
+    if (initial.readable)
+      setWarning(saveProducts(next, { setItem: (key, value) => localStorage.setItem(key, value) }));
   }
 
   function addProduct(event) {
@@ -45,7 +46,7 @@ export function App() {
       return;
     }
     let id = 1;
-    while (products.some(product => product.id === id)) id += 1;
+    while (products.some((product) => product.id === id)) id += 1;
     updateProducts([...products, { id, name: name.trim(), cents, units: count }]);
     setUnits('1');
     setPrice('');
@@ -56,18 +57,77 @@ export function App() {
 
   const best = bestProducts(products);
 
-  return <main>
-    <header><p className="eyebrow">SMALL CHOICES, CLEARER VALUE</p><h1>Compare Cart</h1><p>A little help choosing what goes in your basket.</p></header>
-    <section aria-labelledby="add-title"><h2 id="add-title">Add a product</h2>
-      <form onSubmit={addProduct} noValidate>
-        <label htmlFor="name">Product name</label><input id="name" ref={nameRef} value={name} onChange={event => setName(event.target.value)} maxLength={80} aria-describedby="form-error" />
-        <label htmlFor="price">Pack price ($)</label><input id="price" ref={priceRef} inputMode="decimal" value={price} onChange={event => setPrice(event.target.value)} aria-describedby="form-error" />
-        <label htmlFor="units">Units per pack</label><input id="units" ref={unitsRef} type="number" min="1" max="1000" step="1" value={units} onChange={event => setUnits(event.target.value)} aria-describedby="form-error" />
-        <p id="form-error" role="alert">{error}</p><button>Add product</button>
-      </form>
-    </section>
-    <section aria-labelledby="comparison-title"><h2 id="comparison-title">Your comparison</h2><p className="help">Use the same unit for every product, such as grams or items. Unit prices display rounded to the nearest cent; best value uses the unrounded ratio.</p><p role="status">{warning}</p>
-      {products.length === 0 ? <p>Add your first product to get started.</p> : <ul>{products.map(product => <ProductCard key={product.id} product={product} best={best.includes(product)} onRemove={() => { updateProducts(products.filter(item => item.id !== product.id)); nameRef.current.focus(); }} />)}</ul>}
-    </section>
-  </main>;
+  return (
+    <main>
+      <header>
+        <p className="eyebrow">SMALL CHOICES, CLEARER VALUE</p>
+        <h1>Compare Cart</h1>
+        <p>A little help choosing what goes in your basket.</p>
+      </header>
+      <section aria-labelledby="add-title">
+        <h2 id="add-title">Add a product</h2>
+        <form onSubmit={addProduct} noValidate>
+          <label htmlFor="name">Product name</label>
+          <input
+            id="name"
+            ref={nameRef}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            maxLength={80}
+            aria-describedby="form-error"
+          />
+          <label htmlFor="price">Pack price ($)</label>
+          <input
+            id="price"
+            ref={priceRef}
+            inputMode="decimal"
+            value={price}
+            onChange={(event) => setPrice(event.target.value)}
+            aria-describedby="form-error"
+          />
+          <label htmlFor="units">Units per pack</label>
+          <input
+            id="units"
+            ref={unitsRef}
+            type="number"
+            min="1"
+            max="1000"
+            step="1"
+            value={units}
+            onChange={(event) => setUnits(event.target.value)}
+            aria-describedby="form-error"
+          />
+          <p id="form-error" role="alert">
+            {error}
+          </p>
+          <button>Add product</button>
+        </form>
+      </section>
+      <section aria-labelledby="comparison-title">
+        <h2 id="comparison-title">Your comparison</h2>
+        <p className="help">
+          Use the same unit for every product, such as grams or items. Unit prices display rounded
+          to the nearest cent; best value uses the unrounded ratio.
+        </p>
+        <p role="status">{warning}</p>
+        {products.length === 0 ? (
+          <p>Add your first product to get started.</p>
+        ) : (
+          <ul>
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                best={best.includes(product)}
+                onRemove={() => {
+                  updateProducts(products.filter((item) => item.id !== product.id));
+                  nameRef.current.focus();
+                }}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
+    </main>
+  );
 }

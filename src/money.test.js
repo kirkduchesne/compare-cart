@@ -6,5 +6,7 @@ test('stores prices as integer cents', () => {
   expect(formatPrice(425)).toBe('$4.25');
 });
 test('rejects ambiguous and invalid prices', () => {
-  ['', '0', '-1', 'Infinity', '1e2', '1.234', '100000'].forEach(value => expect(parsePrice(value)).toBeNull());
+  ['', '0', '-1', 'Infinity', '1e2', '1.234', '100000'].forEach((value) =>
+    expect(parsePrice(value)).toBeNull()
+  );
 });

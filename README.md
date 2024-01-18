@@ -8,7 +8,7 @@ Created in September 2026 as a present-day reconstruction of a February 2023 lea
 
 ## Run
 
-Use Node 18, then `npm ci`, `npm run dev`, `npm test`, or `npm run build`. Dependencies are pinned with a lockfile resolved before February 2, 2023. React 18.2 and Vite 4 provide component-based UI and a small build setup. There is no backend or external service.
+Use Node 20, then `npm ci`, `npm run dev`, `npm test`, or `npm run build`. Dependencies are pinned with a lockfile resolved before February 2, 2023. React 18.2 and Vite 4 provide component-based UI and a small build setup. There is no backend or external service.
 
 ## Comparison rules
 
@@ -25,3 +25,7 @@ The implementation derives comparison results from products instead of maintaini
 Dependencies, including all 252 resolved lockfile package versions, were checked against npm publication timestamps before February 2, 2023. Tested with Node 18.20.5 (a later maintenance release) and current Chrome, not an original 2023 runtime/browser. The frozen toolchain has known legacy dependency advisories and is intended for local historical demonstration rather than current production deployment.
 
 Assigned commit dates: February 2, 4, 7, 10, 13, 16, 19, 22, 25, and 28, 2023. Future upgrades should be separate, tested changes instead of rewriting this baseline.
+
+## 2024 maintenance reconstruction
+
+The 2023 baseline is preserved. Additional 2024 commit dates are intentionally assigned to maintenance work reconstructed in September 2026. The January maintenance step upgrades Vite to 5.0.11 and the test tools using a January 18, 2024 dependency cutoff. Node 20.19.0 is used for verification; it is a later maintenance release, not a January 2024 patch.

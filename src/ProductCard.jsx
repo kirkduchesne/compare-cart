@@ -1,11 +1,11 @@
 import { formatPrice } from './money';
 
-export function ProductCard({ product, best, onRemove }) {
+export function ProductCard({ product, best, onRemove, unit = 'items' }) {
   return (
     <li className="product">
       <h3>{product.name}</h3>
       <p>
-        {formatPrice(product.cents)} for {product.units} units
+        {formatPrice(product.cents)} for {product.units} {unit}
       </p>
       <p className="unit-price">
         {formatPrice(Math.round(product.cents / product.units))} per unit

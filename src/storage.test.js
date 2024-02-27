@@ -29,3 +29,13 @@ test('restores validated products', () => {
     false
   );
 });
+
+
+test('loads legacy arrays and stores a versioned measurement', () => {
+  const products = [{ id: 1, name: 'Oats', cents: 450, units: 3 }];
+  expect(loadProducts({ getItem: () => JSON.stringify(products) }).unit).toBe('items');
+  let saved;
+  saveProducts(products, { setItem: (key, value) => { saved = value; } }, 'grams');
+  expect(loadProducts({ getItem: () => saved }).unit).toBe('grams');
+  expect(loadProducts({ getItem: () => '{"version":99,"products":[],"unit":"items"}' }).readable).toBe(false);
+});

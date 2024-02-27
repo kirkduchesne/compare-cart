@@ -53,5 +53,5 @@ test('new IDs remain valid when loaded IDs are large', () => {
   fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '2.01' } });
   fireEvent.click(screen.getByText('Add product'));
   const saved = JSON.parse(localStorage.getItem('compare-cart-v1'));
-  expect(saved[1].id).toBe(1);
+  expect(saved.products[1].id).toBe(1);
 });

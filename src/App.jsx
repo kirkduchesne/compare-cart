@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { parsePrice } from './money';
 import { bestProducts } from './comparison';
 import { ProductCard } from './ProductCard';
-import { loadProducts, saveProducts } from './storage';
+import { loadProducts, saveProducts, unitLabels } from './storage';
 
 export function App() {
   const nameRef = useRef(null);
@@ -12,14 +12,15 @@ export function App() {
   const [units, setUnits] = useState('1');
   const [price, setPrice] = useState('');
   const [initial] = useState(() => loadProducts({ getItem: (key) => localStorage.getItem(key) }));
+  const [unit, setUnit] = useState(initial.unit);
   const [products, setProducts] = useState(initial.products);
   const [warning, setWarning] = useState(initial.warning);
   const [error, setError] = useState('');
 
-  function updateProducts(next) {
+  function updateProducts(next, nextUnit = unit) {
     setProducts(next);
     if (initial.readable)
-      setWarning(saveProducts(next, { setItem: (key, value) => localStorage.setItem(key, value) }));
+      setWarning(saveProducts(next, { setItem: (key, value) => localStorage.setItem(key, value) }, nextUnit));
   }
 
   function addProduct(event) {
@@ -105,6 +106,11 @@ export function App() {
       </section>
       <section aria-labelledby="comparison-title">
         <h2 id="comparison-title">Your comparison</h2>
+        <label htmlFor="unit-label">Measure</label>
+        <select id="unit-label" value={unit} onChange={event => { setUnit(event.target.value); updateProducts(products, event.target.value); }}>
+          {unitLabels.map(label => <option key={label}>{label}</option>)}
+        </select>
+        <p className="help">Changing the label does not convert quantities. Use one measure for all products.</p>
         <p className="help">
           Use the same unit for every product, such as grams or items. Unit prices display rounded
           to the nearest cent; best value uses the unrounded ratio.
@@ -118,6 +124,7 @@ export function App() {
               <ProductCard
                 key={product.id}
                 product={product}
+                unit={unit}
                 best={best.includes(product)}
                 onRemove={() => {
                   updateProducts(products.filter((item) => item.id !== product.id));

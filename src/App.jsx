@@ -16,6 +16,17 @@ export function App() {
   const [products, setProducts] = useState(initial.products);
   const [warning, setWarning] = useState(initial.warning);
   const [error, setError] = useState('');
+  const [editing, setEditing] = useState(null);
+
+  function resetForm() {
+    setEditing(null); setUnits('1'); setPrice(''); setName(''); setError('');
+    nameRef.current.focus();
+  }
+
+  function editProduct(product) {
+    setEditing(product.id); setName(product.name); setUnits(String(product.units));
+    setPrice((product.cents / 100).toFixed(2)); setError(''); nameRef.current.focus();
+  }
 
   function updateProducts(next, nextUnit = unit) {
     setProducts(next);
@@ -42,13 +53,15 @@ export function App() {
       unitsRef.current.focus();
       return;
     }
-    if (products.length >= 6) {
+    if (editing === null && products.length >= 6) {
       setError('Compare up to six products. Remove one before adding another.');
       return;
     }
     let id = 1;
     while (products.some((product) => product.id === id)) id += 1;
-    updateProducts([...products, { id, name: name.trim(), cents, units: count }]);
+    const updated = { id: editing === null ? id : editing, name: name.trim(), cents, units: count };
+    updateProducts(editing === null ? [...products, updated] : products.map(product => product.id === editing ? updated : product));
+    setEditing(null);
     setUnits('1');
     setPrice('');
     setName('');
@@ -101,7 +114,8 @@ export function App() {
           <p id="form-error" role="alert">
             {error}
           </p>
-          <button>Add product</button>
+          <button>{editing === null ? 'Add product' : 'Save changes'}</button>
+          {editing !== null ? <button type="button" className="secondary" onClick={resetForm}>Cancel edit</button> : null}
         </form>
       </section>
       <section aria-labelledby="comparison-title">
@@ -126,7 +140,9 @@ export function App() {
                 product={product}
                 unit={unit}
                 best={best.includes(product)}
+                onEdit={() => editProduct(product)}
                 onRemove={() => {
+                  if (editing === product.id) resetForm();
                   updateProducts(products.filter((item) => item.id !== product.id));
                   nameRef.current.focus();
                 }}

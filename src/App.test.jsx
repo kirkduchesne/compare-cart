@@ -55,3 +55,18 @@ test('new IDs remain valid when loaded IDs are large', () => {
   const saved = JSON.parse(localStorage.getItem('compare-cart-v1'));
   expect(saved.products[1].id).toBe(1);
 });
+
+
+test('edits a product without adding a duplicate and can cancel', () => {
+  localStorage.setItem('compare-cart-v1', JSON.stringify([{ id: 1, name: 'Oats', cents: 200, units: 2 }]));
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: 'Edit Oats' }));
+  fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '3.00' } });
+  fireEvent.click(screen.getByText('Save changes'));
+  expect(screen.getAllByRole('listitem')).toHaveLength(1);
+  expect(screen.getByText('$1.50 per unit')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Edit Oats' }));
+  fireEvent.change(screen.getByLabelText('Product name'), { target: { value: 'Discarded' } });
+  fireEvent.click(screen.getByText('Cancel edit'));
+  expect(screen.queryByText('Discarded')).toBeNull();
+});

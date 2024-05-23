@@ -5,3 +5,10 @@ export function bestProducts(products) {
   );
   return products.filter((item) => item.cents * best.units === best.cents * item.units);
 }
+
+export function sortProducts(products, order) {
+  const sorted = [...products];
+  if (order === 'price') sorted.sort((a, b) => a.cents * b.units - b.cents * a.units);
+  if (order === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name));
+  return sorted;
+}

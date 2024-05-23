@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { parsePrice } from './money';
-import { bestProducts } from './comparison';
+import { bestProducts, sortProducts } from './comparison';
 import { ProductCard } from './ProductCard';
 import { loadProducts, saveProducts, unitLabels } from './storage';
 
@@ -16,6 +16,7 @@ export function App() {
   const [products, setProducts] = useState(initial.products);
   const [warning, setWarning] = useState(initial.warning);
   const [error, setError] = useState('');
+  const [order, setOrder] = useState('added');
   const [editing, setEditing] = useState(null);
 
   function resetForm() {
@@ -129,12 +130,18 @@ export function App() {
           Use the same unit for every product, such as grams or items. Unit prices display rounded
           to the nearest cent; best value uses the unrounded ratio.
         </p>
+        <label htmlFor="sort">Order products</label>
+        <select id="sort" value={order} onChange={event => setOrder(event.target.value)}>
+          <option value="added">Added order</option>
+          <option value="price">Lowest unit price</option>
+          <option value="name">Product name</option>
+        </select>
         <p role="status">{warning}</p>
         {products.length === 0 ? (
           <p>Add your first product to get started.</p>
         ) : (
           <ul>
-            {products.map((product) => (
+            {sortProducts(products, order).map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}

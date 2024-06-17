@@ -16,6 +16,7 @@ export function App() {
   const [products, setProducts] = useState(initial.products);
   const [warning, setWarning] = useState(initial.warning);
   const [error, setError] = useState('');
+  const [target, setTarget] = useState('');
   const [order, setOrder] = useState('added');
   const [editing, setEditing] = useState(null);
 
@@ -130,6 +131,10 @@ export function App() {
           Use the same unit for every product, such as grams or items. Unit prices display rounded
           to the nearest cent; best value uses the unrounded ratio.
         </p>
+        <label htmlFor="target">Quantity needed (optional)</label>
+        <input id="target" type="number" min="1" max="10000" step="1" value={target} onChange={event => setTarget(event.target.value)} aria-describedby="target-help" />
+        <p id="target-help" className="help">Enter 1–10000 {unit} to compare whole-pack purchase costs. Best unit price may cost more for a small purchase.</p>
+        {target !== '' && (!Number.isInteger(Number(target)) || Number(target) < 1 || Number(target) > 10000) ? <p role="alert">Quantity needed must be a whole number from 1 to 10000.</p> : null}
         <label htmlFor="sort">Order products</label>
         <select id="sort" value={order} onChange={event => setOrder(event.target.value)}>
           <option value="added">Added order</option>
@@ -146,6 +151,7 @@ export function App() {
                 key={product.id}
                 product={product}
                 unit={unit}
+                target={Number(target)}
                 best={best.includes(product)}
                 onEdit={() => editProduct(product)}
                 onRemove={() => {

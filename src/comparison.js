@@ -12,3 +12,9 @@ export function sortProducts(products, order) {
   if (order === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name));
   return sorted;
 }
+
+export function purchaseFor(product, target) {
+  if (!Number.isInteger(target) || target < 1 || target > 10000) return null;
+  const packs = Math.ceil(target / product.units);
+  return { packs, cents: packs * product.cents, extra: packs * product.units - target };
+}

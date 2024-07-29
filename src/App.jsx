@@ -12,6 +12,7 @@ export function App() {
   const [units, setUnits] = useState('1');
   const [price, setPrice] = useState('');
   const [initial] = useState(() => loadProducts({ getItem: (key) => localStorage.getItem(key) }));
+  const savedRaw = useRef(initial.raw);
   const [unit, setUnit] = useState(initial.unit);
   const [products, setProducts] = useState(initial.products);
   const [warning, setWarning] = useState(initial.warning);
@@ -32,8 +33,13 @@ export function App() {
 
   function updateProducts(next, nextUnit = unit) {
     setProducts(next);
-    if (initial.readable)
-      setWarning(saveProducts(next, { setItem: (key, value) => localStorage.setItem(key, value) }, nextUnit));
+    if (!initial.readable) return;
+    const message = saveProducts(next, {
+      getItem: key => localStorage.getItem(key),
+      setItem: (key, value) => localStorage.setItem(key, value),
+    }, nextUnit, savedRaw.current);
+    setWarning(message);
+    if (!message) savedRaw.current = JSON.stringify({ version: 2, products: next, unit: nextUnit });
   }
 
   function addProduct(event) {

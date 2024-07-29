@@ -4,7 +4,7 @@ export const unitLabels = ['items', 'grams', 'milliliters'];
 export function loadProducts(storage) {
   try {
     const raw = storage.getItem(key);
-    if (raw === null) return { products: [], unit: 'items', readable: true, warning: '' };
+    if (raw === null) return { products: [], unit: 'items', raw, readable: true, warning: '' };
     const data = JSON.parse(raw);
     const legacy = Array.isArray(data);
     const products = legacy ? data : data.products;
@@ -33,7 +33,7 @@ export function loadProducts(storage) {
       new Set(products.map((product) => product.id)).size !== products.length
     )
       throw new Error('Invalid products');
-    return { products, unit, readable: true, warning: '' };
+    return { products, unit, raw, readable: true, warning: '' };
   } catch {
     return {
       products: [],
@@ -45,8 +45,10 @@ export function loadProducts(storage) {
   }
 }
 
-export function saveProducts(products, storage, unit = 'items') {
+export function saveProducts(products, storage, unit = 'items', expectedRaw) {
   try {
+    if (expectedRaw !== undefined && storage.getItem(key) !== expectedRaw)
+      return 'Saved products changed in another tab. Changes on this page are session-only. Keep a copy before reloading.';
     storage.setItem(key, JSON.stringify({ version: 2, products, unit }));
     return '';
   } catch {

@@ -39,3 +39,10 @@ test('loads legacy arrays and stores a versioned measurement', () => {
   expect(loadProducts({ getItem: () => saved }).unit).toBe('grams');
   expect(loadProducts({ getItem: () => '{"version":99,"products":[],"unit":"items"}' }).readable).toBe(false);
 });
+
+test('refuses to overwrite changes saved by another tab', () => {
+  const values = new Map([['compare-cart-v1', 'other tab']]);
+  const storage = { getItem: key => values.get(key), setItem: (key, value) => values.set(key, value) };
+  expect(saveProducts([], storage, 'items', null)).toContain('another tab');
+  expect(values.get('compare-cart-v1')).toBe('other tab');
+});

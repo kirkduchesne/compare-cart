@@ -1,3 +1,4 @@
+import { downloadComparison } from './backup';
 import { useRef, useState } from 'react';
 import { parsePrice } from './money';
 import { bestProducts, sortProducts } from './comparison';
@@ -17,9 +18,19 @@ export function App() {
   const [products, setProducts] = useState(initial.products);
   const [warning, setWarning] = useState(initial.warning);
   const [error, setError] = useState('');
+  const [backupMessage, setBackupMessage] = useState('');
   const [target, setTarget] = useState('');
   const [order, setOrder] = useState('added');
   const [editing, setEditing] = useState(null);
+
+  function exportComparison() {
+    try {
+      downloadComparison(products, unit);
+      setBackupMessage('Comparison exported. Quantity needed and unsaved form edits are not included.');
+    } catch {
+      setBackupMessage('The download could not start. Keep this page open and try again.');
+    }
+  }
 
   function resetForm() {
     setEditing(null); setUnits('1'); setPrice(''); setName(''); setError('');
@@ -148,6 +159,8 @@ export function App() {
           <option value="name">Product name</option>
         </select>
         <p role="status">{warning}</p>
+        <button type="button" className="secondary" onClick={exportComparison}>Export comparison</button>
+        <p role="status">{backupMessage}</p>
         {products.length === 0 ? (
           <p>Add your first product to get started.</p>
         ) : (

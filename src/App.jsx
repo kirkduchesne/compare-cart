@@ -1,4 +1,4 @@
-import { downloadComparison } from './backup';
+import { downloadComparison, parseBackup } from './backup';
 import { useRef, useState } from 'react';
 import { parsePrice } from './money';
 import { bestProducts, sortProducts } from './comparison';
@@ -22,6 +22,23 @@ export function App() {
   const [target, setTarget] = useState('');
   const [order, setOrder] = useState('added');
   const [editing, setEditing] = useState(null);
+
+  async function importComparison(event) {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    try {
+      if (file.size > 16000) throw new Error('Choose a comparison JSON file smaller than 16 KB.');
+      const backup = parseBackup(await file.text());
+      if (!window.confirm('Replace this comparison with the backup? Export first if you want to keep the current products or unsaved form edits.')) return;
+      setUnit(backup.unit);
+      updateProducts(backup.products, backup.unit);
+      resetForm();
+      setBackupMessage('Comparison imported. Check the storage warning before closing this page.');
+    } catch (error) {
+      setBackupMessage(error.message || 'The file could not be read. Your comparison is unchanged.');
+    }
+  }
 
   function exportComparison() {
     try {
@@ -160,6 +177,8 @@ export function App() {
         </select>
         <p role="status">{warning}</p>
         <button type="button" className="secondary" onClick={exportComparison}>Export comparison</button>
+        <label htmlFor="backup">Import comparison backup</label>
+        <input id="backup" type="file" accept=".json,application/json" onChange={importComparison} />
         <p role="status">{backupMessage}</p>
         {products.length === 0 ? (
           <p>Add your first product to get started.</p>

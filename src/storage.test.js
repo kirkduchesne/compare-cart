@@ -30,19 +30,31 @@ test('restores validated products', () => {
   );
 });
 
-
 test('loads legacy arrays and stores a versioned measurement', () => {
   const products = [{ id: 1, name: 'Oats', cents: 450, units: 3 }];
   expect(loadProducts({ getItem: () => JSON.stringify(products) }).unit).toBe('items');
   let saved;
-  saveProducts(products, { setItem: (key, value) => { saved = value; } }, 'grams');
+  saveProducts(
+    products,
+    {
+      setItem: (key, value) => {
+        saved = value;
+      },
+    },
+    'grams'
+  );
   expect(loadProducts({ getItem: () => saved }).unit).toBe('grams');
-  expect(loadProducts({ getItem: () => '{"version":99,"products":[],"unit":"items"}' }).readable).toBe(false);
+  expect(
+    loadProducts({ getItem: () => '{"version":99,"products":[],"unit":"items"}' }).readable
+  ).toBe(false);
 });
 
 test('refuses to overwrite changes saved by another tab', () => {
   const values = new Map([['compare-cart-v1', 'other tab']]);
-  const storage = { getItem: key => values.get(key), setItem: (key, value) => values.set(key, value) };
+  const storage = {
+    getItem: (key) => values.get(key),
+    setItem: (key, value) => values.set(key, value),
+  };
   expect(saveProducts([], storage, 'items', null)).toContain('another tab');
   expect(values.get('compare-cart-v1')).toBe('other tab');
 });

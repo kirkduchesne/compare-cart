@@ -13,7 +13,8 @@ export function downloadComparison(products, unit) {
 }
 
 export function parseBackup(text) {
-  if (typeof text !== 'string' || text.length > 16000) throw new Error('Choose a comparison JSON file smaller than 16 KB.');
+  if (typeof text !== 'string' || text.length > 16000)
+    throw new Error('Choose a comparison JSON file smaller than 16 KB.');
   const loaded = loadProducts({ getItem: () => text });
   if (!loaded.readable) throw new Error('This file is not a valid comparison backup.');
   return { products: loaded.products, unit: loaded.unit };

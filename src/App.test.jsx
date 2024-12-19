@@ -56,9 +56,11 @@ test('new IDs remain valid when loaded IDs are large', () => {
   expect(saved.products[1].id).toBe(1);
 });
 
-
 test('edits a product without adding a duplicate and can cancel', () => {
-  localStorage.setItem('compare-cart-v1', JSON.stringify([{ id: 1, name: 'Oats', cents: 200, units: 2 }]));
+  localStorage.setItem(
+    'compare-cart-v1',
+    JSON.stringify([{ id: 1, name: 'Oats', cents: 200, units: 2 }])
+  );
   render(<App />);
   fireEvent.click(screen.getByRole('button', { name: 'Edit Oats' }));
   fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '3.00' } });
@@ -69,4 +71,31 @@ test('edits a product without adding a duplicate and can cancel', () => {
   fireEvent.change(screen.getByLabelText('Product name'), { target: { value: 'Discarded' } });
   fireEvent.click(screen.getByText('Cancel edit'));
   expect(screen.queryByText('Discarded')).toBeNull();
+});
+
+test('sorts cards and shows whole-pack purchase costs', () => {
+  localStorage.setItem(
+    'compare-cart-v1',
+    JSON.stringify([
+      { id: 1, name: 'Small', cents: 300, units: 2 },
+      { id: 2, name: 'Large', cents: 500, units: 5 },
+    ])
+  );
+  render(<App />);
+  fireEvent.change(screen.getByLabelText('Order products'), { target: { value: 'price' } });
+  expect(screen.getAllByRole('listitem')[0].textContent).toContain('Large');
+  fireEvent.change(screen.getByLabelText('Quantity needed (optional)'), { target: { value: '6' } });
+  expect(screen.getByText('Buy 2 packs for $10.00 · 4 extra items')).toBeTruthy();
+  expect(screen.getByText('Buy 3 packs for $9.00 · 0 extra items')).toBeTruthy();
+});
+
+test('keeps stale-tab edits in session without overwriting external storage', () => {
+  render(<App />);
+  localStorage.setItem('compare-cart-v1', 'external update');
+  fireEvent.change(screen.getByLabelText('Product name'), { target: { value: 'New' } });
+  fireEvent.change(screen.getByLabelText('Pack price ($)'), { target: { value: '2' } });
+  fireEvent.click(screen.getByText('Add product'));
+  expect(screen.getByText('New')).toBeTruthy();
+  expect(screen.getByText(/changed in another tab/)).toBeTruthy();
+  expect(localStorage.getItem('compare-cart-v1')).toBe('external update');
 });

@@ -38,7 +38,8 @@ label {
   font-weight: 600;
   margin: 12px 0 6px;
 }
-input {
+input,
+select {
   font: inherit;
   width: 100%;
   min-width: 0;
@@ -111,7 +112,7 @@ li {
 .secondary {
   background: white;
   color: #21493d;
-  margin-top: 8px;
+  margin: 8px 8px 0 0;
 }
 .secondary:hover {
   background: #eaf0e6;
@@ -145,4 +146,16 @@ li {
   .product {
     min-width: 0;
   }
+}
+
+input[type='file'] {
+  font-size: 0.875rem;
+}
+.purchase {
+  padding: 8px;
+  background: #f2f4ed;
+  border-radius: 4px;
+}
+button {
+  max-width: 100%;
 }

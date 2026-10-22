@@ -8,7 +8,7 @@ Created in September 2026 as a present-day reconstruction of incremental develop
 
 ## Run
 
-Use Node 20, then `npm ci`, `npm run dev`, `npm test`, or `npm run build`. There is no backend, account, checkout, or live product feed. Enter your own prices.
+Use Node 22.23.4 (`nvm install && nvm use`), then `npm ci`, `npm run dev`, `npm test`, or `npm run build`. There is no backend, account, checkout, or live product feed. Enter your own prices.
 
 ## Comparison rules
 
@@ -28,6 +28,8 @@ Malformed storage is preserved; changes remain session-only. Blocked writes show
 
 January 18, 2024 introduces Vite 5.0.11 and a Node 20 toolchain. November 14 updates React to 18.3.1, Vite to 5.4.11, and React Testing Library to 16.0.1. All resolved package publication dates were audited against the introducing milestone: 282 versions in January and 240 in November.
 
-Tests cover money parsing, exact ratios, ties, bounded purchase costs, editing, sorting, migration, invalid backups, and stale or unavailable storage. Browser checks cover the main workflow, backup confirmation, persistence, keyboard focus, and mobile layout. CI runs tests and builds on Node 20.18.1, released November 20, 2024. Local verification uses Node 20.19.0 (a later maintenance patch) and current Chrome, not an original 2024 runtime/browser.
+Tests cover money parsing, exact ratios, ties, bounded purchase costs, editing, sorting, migration, invalid backups, and stale or unavailable storage. Browser checks cover the main workflow, backup confirmation, persistence, keyboard focus, and mobile layout. The historical CI ran tests and builds on Node 20.18.1, released November 20, 2024. Historical local verification used Node 20.19.0 (a later maintenance patch) and current Chrome, not an original 2024 runtime/browser.
 
-The frozen historical toolchain has known dependency advisories. It is a local demonstration; update dependencies before current production deployment.
+Current development and CI use Node 22.23.4, the smallest supported patched release line from the [October 21, 2026 security releases](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases). CI reads the exact version from `.nvmrc`; the package engine accepts patched Node 22 releases starting at 22.23.4. Node is used for local development, tests and static builds; the generated application runs in the browser. This update does not establish a deployed Node server.
+
+The historical dependencies have received compatible security patches (Vite 5.4.21, Vitest 1.6.1, React plugin 4.7.0 and transitive updates). A full audit still reports five development-tooling findings: Vite (high), esbuild and vite-node (moderate), and Vitest and tinypool (critical). Removing these requires a separately tested major toolchain migration. `npm audit --omit=dev` reports no production dependency findings as of October 22, 2026; this is not a production-safety guarantee. This remains a local demonstration; resolve the remaining advisories before current production deployment.
